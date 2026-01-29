@@ -1,0 +1,8 @@
+_sourceCategory=web_app_logs
+| parse regex "url=(?<url>\\S+)" 
+| parse regex "latency=(?<latency>\d+)" 
+| where (url matches "/api/data") 
+| where toNumber(latency) > 3000 
+| timeslice 10m
+| count as slow_calls by _timeslice
+| where slow_calls > 5 
